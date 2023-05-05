@@ -76,7 +76,7 @@ def search_client(conn, searching_info): # Функция, позволяюща�
         """, (searching_info, searching_info, searching_info, searching_info))
     print(cur.fetchone())
 
-with psycopg2.connect(database="test-base", user="postgres", password="Markouno123") as conn:
+with psycopg2.connect(database="Ваша база", user="Аккаунт", password="Пароль") as conn:
     with conn.cursor() as cur:
         conn.autocommit = True
         # create_table(conn)
