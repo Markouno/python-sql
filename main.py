@@ -36,7 +36,35 @@ def insert_phone(conn, client_id, phone_number): # Функция, позвол�
         VALUES (%s, %s);
         """, (client_id, phone_number))
 
-def info_update(conn, client_id, first_name, last_name, email, phone_number): # Функция, позволяющая изменить данные о клиенте.
+def info_update(conn, client_id, first_name=None, last_name=None, email=None, phone_number=None): # Функция, позволяющая изменить данные о клиенте.    
+    if first_name is None:
+        cur.execute("""
+            SELECT first_name from Client
+            WHERE id = %s;
+        """, (client_id,))
+        first_name = cur.fetchone()[0]
+    
+    if last_name is None:
+        cur.execute("""
+            SELECT last_name from Client
+            WHERE id = %s;
+        """, (client_id,))
+        last_name = cur.fetchone()[0]
+
+    if email is None:
+        cur.execute("""
+            SELECT email from Client
+            WHERE id = %s;
+        """, (client_id,))
+        email = cur.fetchone()[0]
+
+    if phone_number is None:
+        cur.execute("""
+            SELECT phone from Phone_book
+            WHERE client_id = %s;
+        """, (client_id,))
+        phone_number = cur.fetchone()[0]
+
     cur.execute("""
         UPDATE Client
         SET first_name = %s,
@@ -68,15 +96,15 @@ def remove_client(conn, client_id): # Функция, позволяющая у�
         WHERE id = %s;
         """, (client_id,))
 
-def search_client(conn, searching_info): # Функция, позволяющая найти клиента по его данным: имени, фамилии, email или телефону.
+def search_client(conn, first_name=None, surname=None, email=None, phone=None): # Функция, позволяющая найти клиента по его данным: имени, фамилии, email или телефону.
     cur.execute("""
         SELECT first_name, last_name from Client
         LEFT JOIN Phone_book ON client.id = phone_book.client_id
-        WHERE first_name ILIKE %s OR last_name ILIKE %s OR email ILIKE %s OR phone ILIKE %s;
-        """, (searching_info, searching_info, searching_info, searching_info))
+        WHERE first_name = %s OR last_name = %s OR email = %s OR phone = %s;
+        """, (first_name, surname, email, phone))
     print(cur.fetchone())
 
-with psycopg2.connect(database="Ваша база", user="Аккаунт", password="Пароль") as conn:
+with psycopg2.connect(database="test-base", user="postgres", password="Markouno123") as conn:
     with conn.cursor() as cur:
         conn.autocommit = True
         # create_table(conn)
@@ -86,6 +114,5 @@ with psycopg2.connect(database="Ваша база", user="Аккаунт", passw
         # info_update(conn, '1', 'Егор', 'Павлычев', 'surokk02@mail,ru', '12345454545123')
         # remove_phone(conn, '12345454545123')
         # remove_client(conn, '2')
-        # search_client(conn, '41241244124')
-
-
+        # search_client(conn, 'Ало')
+        info_update(conn, 1, 'Вадим', None, None, None)
